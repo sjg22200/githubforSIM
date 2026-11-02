@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>서정관 | 포트폴리오 & SIM 프로젝트</title>
+  <meta name="description" content="전북대학교 서정관의 포트폴리오 및 스포츠 중계 영어 사전 프로젝트 SIM(Searching in Matches) 소개 페이지">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Pretendard:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Background Glow & Particles -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-grid-overlay"></div>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <span class="logo-badge">DEV</span>
+        <span class="logo-name">서정관</span>
+        <span class="logo-divider">/</span>
+        <span class="logo-sub">SIM Creator</span>
+      </a>
+
+      <nav class="nav-links">
+        <button class="nav-btn active" data-target="about"><i class="fa-solid fa-user"></i> <span>자기소개</span></button>
+        <button class="nav-btn" data-target="sim-overview"><i class="fa-solid fa-bolt"></i> <span>SIM 소개</span></button>
+        <button class="nav-btn" data-target="sim-preview"><i class="fa-solid fa-desktop"></i> <span>SIM UI
+            체험관</span></button>
+        <button class="nav-btn" data-target="features"><i class="fa-solid fa-list-check"></i> <span>주요
+            기능</span></button>
+        <button class="nav-btn" data-target="roadmap"><i class="fa-solid fa-compass"></i> <span>로드맵 & 비전</span></button>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="https://match-speak-buddy.lovable.app/" target="_blank" rel="noopener noreferrer" class="btn-external">
+          <span>SIM 바로가기</span>
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- Hero Section -->
+    <section id="hero" class="section hero-section">
+      <div class="hero-wrapper">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>전북대학교 · 스포츠 & 바이브 코딩 크리에이터</span>
+        </div>
+        <h1 class="hero-title">
+          "경기장에 등장하는 중계 영어를<br>
+          <span class="gradient-text">누구나 즐길 수 있는 지식으로</span> 만듭니다."
+        </h1>
+        <p class="hero-desc">
+          안녕하세요, 전북대학교에 재학 중인 <strong>서정관</strong>입니다.<br>
+          해외 현지 스포츠 중계의 생생한 해설과 관용 표현을 자막 없이 이해하고 즐길 수 있도록 돕는<br>
+          스포츠 중계 영어 사전 서비스 <strong>SIM(Searching in Matches)</strong>을 기획 및 개발하고 있습니다.
+        </p>
+
+        <div class="hero-cta-group">
+          <a class="btn btn-primary" href="../sim/index.html">
+            <i class="fa-solid fa-futbol"></i> SIM 축구 사전 앱 열기
+          </a>
+          <button class="btn btn-secondary scroll-to-btn" data-scroll="sim-preview">
+            <i class="fa-solid fa-play"></i> 소개 페이지에서 UI 미리보기
+          </button>
+          <button class="btn btn-secondary scroll-to-btn" data-scroll="about">
+            <i class="fa-solid fa-id-card"></i> 서정관 스토리 보기
+          </button>
+          <button class="btn btn-outline" id="btnOpenResumeModal">
+            <i class="fa-solid fa-file-lines"></i> 자기소개서 원문 읽기
+          </button>
+        </div>
+
+        <!-- Quick Stats / Highlights -->
+        <div class="hero-stats">
+          <div class="stat-card">
+            <i class="fa-solid fa-graduation-cap stat-icon"></i>
+            <div class="stat-info">
+              <span class="stat-val">전북대학교</span>
+              <span class="stat-lbl">재학 중 (서정관)</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="fa-solid fa-futbol stat-icon"></i>
+            <div class="stat-info">
+              <span class="stat-val">Sports Passion</span>
+              <span class="stat-lbl">온·오프라인 관람 & 직관</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="fa-solid fa-wand-magic-sparkles stat-icon"></i>
+            <div class="stat-info">
+              <span class="stat-val">Vibe Coding</span>
+              <span class="stat-lbl">생성형 AI 접목 & UI 구현</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <i class="fa-solid fa-compass-drafting stat-icon"></i>
+            <div class="stat-info">
+              <span class="stat-val">Focus & Expand</span>
+              <span class="stat-lbl">축구 집중 개발 → 전 종목 확장</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: About Me -->
+    <section id="about" class="section">
+      <div class="section-header">
+        <div class="section-tag"><i class="fa-solid fa-user-astronaut"></i> ABOUT ME</div>
+        <h2 class="section-title">스포츠 열정을 서비스로 빚어내는 개발자</h2>
+        <p class="section-subtitle">현지 중계를 자막 없이 즐기고 싶다는 진솔한 바람에서 시작해, 끊임없는 노력으로 서비스를 완성해 갑니다.</p>
+      </div>
+
+      <div class="about-grid">
+        <!-- Profile Card -->
+        <div class="profile-card glass-card">
+          <div class="profile-avatar-wrap">
+            <div class="avatar-ring"></div>
+            <div class="avatar-icon">
+              <i class="fa-solid fa-user"></i>
+            </div>
+          </div>
+          <h3 class="profile-name">서정관</h3>
+          <p class="profile-role">전북대학교 재학생 / SIM Creator</p>
+
+          <div class="profile-divider"></div>
+
+          <div class="profile-quote">
+            <i class="fa-solid fa-quote-left quote-mark"></i>
+            <p>"자막 없이 영어 중계 용어와 표현들을 직접 이해하고 즐길 수 있는 세상을 꿈꿉니다."</p>
+          </div>
+
+          <div class="profile-btn-row">
+            <button class="btn btn-profile-action" id="btnTriggerResumeInline">
+              <i class="fa-solid fa-book-open-reader"></i> 자기소개서 전문 열람
+            </button>
+          </div>
+        </div>
+
+        <!-- Narrative Timeline Cards (5 Steps based on 자기소개서.txt) -->
+        <div class="story-container">
+          <div class="story-item glass-card">
+            <div class="story-num">01</div>
+            <div class="story-content">
+              <h4>스포츠 관람의 즐거움과 새로운 결심</h4>
+              <p>
+                어렸을 때부터 온·오프라인에서 스포츠 경기를 관람하고 직관하며 꾸준한 관심을 키워왔습니다. 국내 생중계와 하이라이트 시청이 취미로 자리 잡던 중, <strong>현지 중계 영상을 자막 없이 영어 용어와 각종 표현 그대로 이해하고 즐길 수 있다면 어떨까</strong> 하는 생각에 이르렀고, 이를 직접 배우고 이해할 수 있는 웹/앱을 만들기로 결심했습니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="story-item glass-card">
+            <div class="story-num">02</div>
+            <div class="story-content">
+              <h4>정확한 정보 탐색과 '선택과 집중'의 극복</h4>
+              <p>
+                모르는 상황이나 용어가 나올 때마다 정의와 실제 경기 해설, 예시를 찾아보며 정확한 정보를 수집했습니다. 하지만 초기에는 여러 종목에 대한 지식 범위와 방향성 설정에 많은 고민과 시간이 소요되었습니다. 이에 <strong>종목 하나(축구)를 먼저 정해 집중 개발하여 시간을 효율화하고, 타 종목은 추후 업데이트로 확장</strong>하는 명확한 실행 전략을 세웠습니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="story-item glass-card">
+            <div class="story-num">03</div>
+            <div class="story-content">
+              <h4>대학 강의에서 접한 '바이브 코딩'과 깊은 깨달음</h4>
+              <p>
+                대학 강의를 통해 생성형 AI를 활용해 코딩을 진행하는 <strong>'바이브 코딩'</strong>을 접목했습니다. 이 과정에서 단순히 AI 툴을 다루는 것을 넘어, <strong>내가 진정 원하는 완성도 높은 결과물을 만들어내기 위해서는 수많은 시간과 끊임없는 노력이 반드시 뒷받침되어야 한다는 점</strong>을 깊이 깨달았습니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="story-item glass-card">
+            <div class="story-num">04</div>
+            <div class="story-content">
+              <h4>가상 UI 설계와 '영상 속 표현 학습' 환경 구체화</h4>
+              <p>
+                생성형 AI를 활용하여 구상해온 앱의 UI 화면을 가상으로 직접 만들어보며 실제 서비스 구조를 체계화했습니다. 그 결과 축구, 야구, 농구 등 스포츠 용어를 사전식으로 전달할 뿐만 아니라, <strong>유튜브 등 실제 중계 영상 속에서도 타임라인을 통해 용어와 표현을 직관적으로 배울 수 있는 실전형 학습 환경</strong>을 조성했습니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="story-item glass-card">
+            <div class="story-num">05</div>
+            <div class="story-content">
+              <h4>포기하지 않는 원동력과 끝없는 도전</h4>
+              <p>
+                직접 앱을 개발하는 첫 여정은 쉽지 않고 다소 어렵게 다가왔습니다. 하지만 <strong>내가 만든 서비스를 다른 사용자들이 유익하게 활용하는 모습과 스포츠 팬들에게 전해질 뿌듯한 경험</strong>을 상상할 때 가장 큰 힘을 얻습니다. 성공적인 서비스 완성을 위해 포기하지 않고 끝까지 개발 여정을 이어가겠습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: SIM Project Overview -->
+    <section id="sim-overview" class="section">
+      <div class="section-header">
+        <div class="section-tag"><i class="fa-solid fa-sparkles"></i> PROJECT INTRODUCTION</div>
+        <h2 class="section-title">SIM : Searching in Matches</h2>
+        <p class="section-subtitle">경기장에 떨어지는 영어를 담아내다 — 스포츠 중계 영어 전문 사전 & 타임라인 분석기</p>
+      </div>
+
+      <div class="sim-intro-box glass-card">
+        <div class="sim-intro-content">
+          <div class="sim-brand">
+            <div class="sim-logo-icon">S</div>
+            <div>
+              <h3>SIM (Searching in Matches)</h3>
+              <p class="sim-subline">스포츠 중계 속 전문 용어와 관용 표현을 실제 문장으로 익히는 사전</p>
+            </div>
+          </div>
+          <p class="sim-mission">
+            중계 화면 속 해설진의 빠른 스피치와 특유의 축구·스포츠 슬랭은 일반 영어 사전으로는 찾기 어렵습니다.<br>
+            <strong>SIM</strong>은 중계에서 빈출되는 전문 표현을 <strong>실제 해설 예문</strong>과 함께 제공하고, <strong>유튜브 경기 영상 링크 하나로</strong>
+            타임라인별 표현을 실시간으로 분석·추출합니다.
+          </p>
+          <div class="sim-badge-row">
+            <span class="sim-pill"><i class="fa-solid fa-check"></i> 스포츠 특화 해설 데이터</span>
+            <span class="sim-pill"><i class="fa-solid fa-check"></i> 유튜브 타임스탬프 분석</span>
+            <span class="sim-pill"><i class="fa-solid fa-check"></i> 실전 코멘터리 예문 & 발음</span>
+            <span class="sim-pill"><i class="fa-solid fa-check"></i> 반응형 웹 플랫폼</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: SIM Interactive Preview (UI & Features) -->
+    <section id="sim-preview" class="section">
+      <div class="section-header">
+        <div class="section-tag"><i class="fa-solid fa-desktop"></i> INTERACTIVE UI PREVIEW</div>
+        <h2 class="section-title">SIM 첫 화면 UI & 기능 체험관</h2>
+        <p class="section-subtitle">실제 서비스되는 SIM(Searching in Matches)의 첫 UI 화면과 주요 기능을 직접 조작해 보세요.</p>
+      </div>
+
+      <!-- Tab Buttons for SIM UI Mode -->
+      <div class="sim-tab-controls">
+        <button class="sim-tab-btn active" data-sim-tab="home-tab">
+          <i class="fa-solid fa-house"></i> 메인 첫 화면 (Home Hero)
+        </button>
+        <button class="sim-tab-btn" data-sim-tab="dict-tab">
+          <i class="fa-solid fa-book-open"></i> 사전 기능 (Dictionary)
+        </button>
+        <button class="sim-tab-btn" data-sim-tab="analysis-tab">
+          <i class="fa-brands fa-youtube"></i> 중계 영상 분석 (Analysis)
+        </button>
+      </div>
+
+      <!-- Mock Browser Container -->
+      <div class="mock-browser glass-card">
+        <!-- Browser Top Bar -->
+        <div class="browser-topbar">
+          <div class="browser-dots">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="browser-address">
+            <i class="fa-solid fa-lock text-green"></i>
+            <span>https://match-speak-buddy.lovable.app/</span>
+          </div>
+          <div class="browser-actions">
+            <a href="https://match-speak-buddy.lovable.app/" target="_blank" rel="noopener noreferrer"
+              title="새 탭에서 실제 사이트 열기" class="browser-ext-link">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Embedded SIM Virtual Viewport -->
+        <div class="sim-viewport">
+
+          <!-- Virtual SIM Header -->
+          <div class="sim-nav">
+            <div class="sim-nav-brand">
+              <span class="sim-badge-s">S</span>
+              <span class="sim-name-text">SIM</span>
+              <span class="sim-sub-text">Searching in Matches</span>
+            </div>
+            <div class="sim-nav-links">
+              <button class="sim-nav-link active" onclick="switchSimTab('home-tab')">홈</button>
+              <button class="sim-nav-link" onclick="switchSimTab('dict-tab')">사전 Dictionary</button>
+              <button class="sim-nav-link" onclick="switchSimTab('analysis-tab')">중계 분석 Analysis</button>
+            </div>
+          </div>
+
+          <!-- TAB 1: Home View -->
+          <div class="sim-page-view active" id="home-tab">
+            <div class="sim-hero-content">
+              <div class="sim-chip">⚽ FOOTBALL & SPORTS COMMENTARY DICTIONARY</div>
+              <h1 class="sim-display-title">
+                경기장에 떨어지는<br>
+                <span class="highlight-green">영어를 담아내다.</span>
+              </h1>
+              <p class="sim-lead-p">
+                중계 속 전문 용어와 관용 표현을 사전처럼 정리하고,<br>
+                유튜브 영상 하나면 그 안의 표현들을 시간축으로 뽑아냅니다.
+              </p>
+
+              <!-- Search Bar Widget -->
+              <div class="sim-search-bar">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="simHomeSearchInput"
+                  placeholder="궁금한 중계 표현 검색 (예: Offside Trap, Screamer, Brace...)" value="Offside Trap">
+                <button class="sim-search-btn" id="simSearchTriggerBtn">검색하기</button>
+              </div>
+
+              <!-- Quick keyword tags -->
+              <div class="sim-tag-cloud">
+                <span class="sim-tag-title">추천 키워드:</span>
+                <button class="quick-chip" onclick="searchSimWord('Offside Trap')">#Offside Trap</button>
+                <button class="quick-chip" onclick="searchSimWord('Screamer')">#Screamer</button>
+                <button class="quick-chip" onclick="searchSimWord('Clean Sheet')">#Clean Sheet</button>
+                <button class="quick-chip" onclick="searchSimWord('High Press')">#High Press</button>
+                <button class="quick-chip" onclick="searchSimWord('Brace')">#Brace</button>
+              </div>
+
+              <!-- Featured Word Card (Offside Trap) -->
+              <div class="sim-featured-card" id="featuredWordCard">
+                <div class="featured-card-header">
+                  <div>
+                    <span class="term-badge">TACTICAL DEFENSE</span>
+                    <h3 class="term-title" id="featuredTitle">Offside Trap</h3>
+                    <p class="term-phonetic" id="featuredPhonetic">[ˌɔːf.saɪd ˈtræp] · 오프사이드 트랩</p>
+                  </div>
+                  <button class="btn-audio" id="featuredSpeechBtn" title="원어민 발음 듣기">
+                    <i class="fa-solid fa-volume-high"></i> 발음 듣기
+                  </button>
+                </div>
+                <div class="term-body">
+                  <div class="term-desc" id="featuredDesc">
+                    <strong>개념 요약:</strong> 수비 라인을 동시에 앞으로 올리며 공격수를 오프사이드로 만드는 포석. 중계에서는 수비 전술 전환을 알릴 때 씁니다.
+                  </div>
+                  <div class="term-detail" id="featuredDetail">
+                    수비수들이 약속된 타이밍에 함께 전진해 패스의 수취인을 오프사이드로 만드는 조직적인 수비 기법.
+                  </div>
+                  <div class="term-example-box">
+                    <div class="ex-label"><i class="fa-solid fa-microphone-lines"></i> 실제 현지 중계 해설 예문:</div>
+                    <blockquote class="ex-quote" id="featuredQuote">
+                      “And the whole back line steps up — and that's the offside trap, caught clean!”
+                    </blockquote>
+                    <p class="ex-trans" id="featuredTrans">“그리고 최종 수비 라인 전체가 전진합니다 — 완벽한 오프사이드 트랩이 걸렸습니다!”</p>
+                  </div>
+                </div>
+                <div class="term-footer">
+                  <button class="btn-analysis-link" onclick="switchSimTab('analysis-tab')">
+                    <i class="fa-brands fa-youtube"></i> 중계 영상에서 이 표현 찾기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Dictionary View -->
+          <div class="sim-page-view" id="dict-tab">
+            <div class="dict-header-row">
+              <div>
+                <h3 class="dict-section-title"><i class="fa-solid fa-book"></i> 스포츠 중계 영어 사전 (Dictionary)</h3>
+                <p class="dict-section-sub">축구 및 스포츠 경기에서 자주 등장하는 전문 용어와 관용구 목록입니다.</p>
+              </div>
+              <div class="dict-filter-group">
+                <button class="filter-btn active" data-filter="all">전체</button>
+                <button class="filter-btn" data-filter="tactic">전술 / 전략</button>
+                <button class="filter-btn" data-filter="shot">슈팅 / 득점</button>
+                <button class="filter-btn" data-filter="defense">수비 / 골키퍼</button>
+              </div>
+            </div>
+
+            <!-- Dictionary Search Box -->
+            <div class="dict-search-inline">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="dictInlineSearch" placeholder="사전 내 검색 (영어, 한글, 뜻)...">
+            </div>
+
+            <!-- Dictionary List Grid -->
+            <div class="dict-cards-grid" id="dictCardsGrid">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+
+          <!-- TAB 3: Analysis View -->
+          <div class="sim-page-view" id="analysis-tab">
+            <div class="analysis-container">
+              <div class="analysis-intro">
+                <span class="chip-youtube"><i class="fa-brands fa-youtube"></i> YOUTUBE TIMELINE ANALYZER</span>
+                <h3 class="analysis-title">유튜브 링크를 붙여, 용어를 시간축으로.</h3>
+                <p class="analysis-sub">분석할 경기 중계 영상을 올리면, 표현이 등장한 시각과 함께 타임라인에 쌓입니다.</p>
+              </div>
+
+              <!-- Input Form Mockup -->
+              <div class="yt-input-card">
+                <div class="yt-input-field">
+                  <i class="fa-brands fa-youtube yt-icon"></i>
+                  <input type="text" id="ytUrlInput" placeholder="유튜브 경기 중계 하이라이트 영상 URL 입력..."
+                    value="https://www.youtube.com/watch?v=PL-Match-Highlights-2024">
+                  <button class="btn-analyze" id="btnRunAnalysis">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 중계 분석 시작
+                  </button>
+                </div>
+                <div class="sample-preset-row">
+                  <span>샘플 영상 프리셋:</span>
+                  <button class="preset-btn" data-match="epl">EPL 맨시티 vs 아스날 빅매치</button>
+                  <button class="preset-btn" data-match="ucl">UCL 챔피언스리그 결승전</button>
+                  <button class="preset-btn" data-match="son">손흥민 원더골 경기 하이라이트</button>
+                </div>
+              </div>
+
+              <!-- Timeline Result Display -->
+              <div class="analysis-results" id="analysisResultsBox">
+                <div class="analysis-result-header">
+                  <div class="match-info">
+                    <i class="fa-solid fa-circle-check text-green"></i>
+                    <strong>분석 완료:</strong> <span id="currentMatchTitle">Premier League Match Commentary Analysis</span>
+                    <span class="badge-count" id="extractedCount">5개 표현 추출됨</span>
+                  </div>
+                </div>
+
+                <div class="timeline-list" id="timelineList">
+                  <!-- Dynamically populated timeline items -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Features Showcase -->
+    <section id="features" class="section">
+      <div class="section-header">
+        <div class="section-tag"><i class="fa-solid fa-microchip"></i> CORE CAPABILITIES</div>
+        <h2 class="section-title">SIM이 제공하는 4가지 핵심 가치</h2>
+        <p class="section-subtitle">단순 번역을 넘어 스포츠 팬의 눈높이와 실전 경기 맥락을 완벽히 이해하는 지능형 학습 환경</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrap icon-green">
+            <i class="fa-solid fa-bullhorn"></i>
+          </div>
+          <h3 class="feature-title">실제 경기 중계 해설 & 예문</h3>
+          <p class="feature-desc">
+            일반적인 교과서적 예문이 아닌, 실제 현지 해설진이 경기장 순간순간 사용하는 생생하고 긴박감 넘치는 코멘터리 예문을 엄선하여 제공합니다.
+          </p>
+          <ul class="feature-points">
+            <li><i class="fa-solid fa-check"></i> 현장감 100% 실전 해설 구문 수록</li>
+            <li><i class="fa-solid fa-check"></i> 웹 음성 API 기반 원어민 발음 듣기 지원</li>
+          </ul>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrap icon-cyan">
+            <i class="fa-solid fa-timeline"></i>
+          </div>
+          <h3 class="feature-title">유튜브 영상 타임라인 연계 학습</h3>
+          <p class="feature-desc">
+            중계 하이라이트 영상 속에서 용어와 표현이 등장한 시간대를 추출하여 타임라인 형태로 시각화하여, 경기 상황과 함께 직관적으로 배울 수 있습니다.
+          </p>
+          <ul class="feature-points">
+            <li><i class="fa-solid fa-check"></i> 타임스탬프 기반 경기 상황별 매칭</li>
+            <li><i class="fa-solid fa-check"></i> 영상과 함께 즐기는 실전 맥락 학습</li>
+          </ul>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrap icon-indigo">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <h3 class="feature-title">생성형 AI & 바이브 코딩 접목</h3>
+          <p class="feature-desc">
+            생성형 AI를 통한 UI 설계와 바이브 코딩을 적극 도입하고, 끊임없는 시행착오와 정성을 쏟아 사용자 친화적인 인터페이스를 완성했습니다.
+          </p>
+          <ul class="feature-points">
+            <li><i class="fa-solid fa-check"></i> 직관적인 가상 UI 프로토타이핑 검증</li>
+            <li><i class="fa-solid fa-check"></i> 팬들의 실시간 피드백 반영 아키텍처</li>
+          </ul>
+        </div>
+
+        <div class="feature-card glass-card">
+          <div class="feature-icon-wrap icon-amber">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <h3 class="feature-title">효율적인 단계별 종목 확장</h3>
+          <p class="feature-desc">
+            데이터가 가장 풍부한 축구 종목을 먼저 완성도 높게 구축한 뒤, 야구·농구 등 타 종목으로 점진적 확장을 이어가는 스마트 개발 전략을 실행합니다.
+          </p>
+          <ul class="feature-points">
+            <li><i class="fa-solid fa-check"></i> 축구(EPL, UCL) 집중 최적화 완료</li>
+            <li><i class="fa-solid fa-check"></i> 야구(MLB), 농구(NBA) 업데이트 로드맵</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: Roadmap & Vision -->
+    <section id="roadmap" class="section">
+      <div class="section-header">
+        <div class="section-tag"><i class="fa-solid fa-compass"></i> FUTURE ROADMAP</div>
+        <h2 class="section-title">서비스 확장 로드맵 & 비전</h2>
+        <p class="section-subtitle">축구에서 시작하여 야구, 농구 등 전 세계 모든 스포츠 팬을 위한 글로벌 에듀테크 플랫폼으로</p>
+      </div>
+
+      <div class="roadmap-wrapper">
+        <!-- Stage 1 -->
+        <div class="roadmap-card glass-card active-stage">
+          <div class="roadmap-badge-stage">Phase 1 · 현재 집중 단계</div>
+          <div class="roadmap-sport-icon"><i class="fa-solid fa-futbol"></i></div>
+          <h3 class="roadmap-title">축구 (Football / Soccer)</h3>
+          <p class="roadmap-desc">
+            EPL, 라리가, 챔피언스리그 등 해외 축구 중계 용어 사전 및 유튜브 영상 타임라인 분석 엔진 고도화.
+          </p>
+          <div class="roadmap-tags">
+            <span>#EPL</span>
+            <span>#UCL</span>
+            <span>#전술용어사전</span>
+            <span>#타임라인분석</span>
+          </div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="roadmap-card glass-card">
+          <div class="roadmap-badge-stage">Phase 2 · 다음 확장</div>
+          <div class="roadmap-sport-icon"><i class="fa-solid fa-baseball-bat-ball"></i></div>
+          <h3 class="roadmap-title">야구 (Baseball)</h3>
+          <p class="roadmap-desc">
+            MLB(메이저리그) 현지 중계 용어(SABR 세이버메트릭스, 구종 표현, 상황별 콜 등) 사전 구축 및 데이터베이스 확장.
+          </p>
+          <div class="roadmap-tags">
+            <span>#MLB</span>
+            <span>#구종해설</span>
+            <span>#세이버메트릭스</span>
+            <span>#중계콜</span>
+          </div>
+        </div>
+
+        <!-- Stage 3 -->
+        <div class="roadmap-card glass-card">
+          <div class="roadmap-badge-stage">Phase 3 · 다각화</div>
+          <div class="roadmap-sport-icon"><i class="fa-solid fa-basketball"></i></div>
+          <h3 class="roadmap-title">농구 (Basketball)</h3>
+          <p class="roadmap-desc">
+            NBA 중계의 빠른 플레이 콜과 슬랭(Pick & Roll, Alley-oop, Buzzer Beater 등)을 실시간으로 학습하는 시스템.
+          </p>
+          <div class="roadmap-tags">
+            <span>#NBA</span>
+            <span>#플레이콜</span>
+            <span>#농구슬랭</span>
+            <span>#실시간해설</span>
+          </div>
+        </div>
+
+        <!-- Stage 4 -->
+        <div class="roadmap-card glass-card">
+          <div class="roadmap-badge-stage">Phase 4 · 글로벌 플랫폼</div>
+          <div class="roadmap-sport-icon"><i class="fa-solid fa-globe"></i></div>
+          <h3 class="roadmap-title">글로벌 스포츠 에듀테크</h3>
+          <p class="roadmap-desc">
+            다국어 지원 및 모바일 앱(iOS/Android) 런칭을 통해 전 세계 스포츠 팬들이 언어의 장벽 없이 경기를 온전히 만끽하는 생태계 완성.
+          </p>
+          <div class="roadmap-tags">
+            <span>#모바일앱</span>
+            <span>#다국어지원</span>
+            <span>#글로벌팬경험</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Resume Full Text Modal -->
+  <div class="resume-modal-backdrop" id="resumeModal">
+    <div class="resume-modal-dialog glass-card">
+      <div class="resume-modal-header">
+        <div class="modal-title-wrap">
+          <i class="fa-solid fa-file-signature modal-icon"></i>
+          <div>
+            <h3 class="modal-title">서정관 자기소개서 전문</h3>
+            <span class="modal-sub">전북대학교 재학생 서정관의 개발 스토리 & 비전 원문</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btnCloseResumeModal" title="닫기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="resume-modal-body">
+        <div class="resume-text-card">
+          <p class="resume-p">
+            안녕하세요, 저는 전북대학교에 재학 중인 <strong>서정관</strong>입니다.<br>
+            저는 여러 스포츠 경기를 보는 것에 흥미를 느껴왔습니다.<br>
+            국내에서 송출되는 경기의 생중계와, 하이라이트 영상을 보는 것이 취미로 자리잡혔습니다.<br>
+            그러던 어느 날, 현지 중계 영상을 보고 자막없이 영어로 된 용어들과 각종 표현들을 이해하고 즐길 수 있다면 어떨까 생각하였습니다.<br>
+            그래서 저는 이러한 용어, 표현들을 배우고 이해할 수 있는 앱이나 웹사이트를 만들기로 결심했습니다.
+          </p>
+          <hr class="resume-hr">
+          <p class="resume-p">
+            저는 어렸을 때 부터 온, 오프라인에서 각종 스포츠 경기를 보거나 직접 관람하는 등 스포츠 경기에 꾸준히 관심을 가지고 있습니다.<br>
+            그 과정에서 모르는 상황이나 용어가 나올 때, 그것들의 정의를 찾아보고 실제 경기와 해설을 찾아보며 예시를 확인하는 등 최대한 정확한 정보를 얻으려고 하고 있습니다.<br>
+            다만 저는 아직 여러 종목에 지식이 뚜렷한 것이 아니다 보니 앱 개발의 방향성을 명확히 하는데에 차질을 빚었습니다. 또한 저는 종목마다 무슨 용어를, 어떤 범위까지 넣어야 하나 자주 고민하는데에 시간을 많이 소비하고 있었습니다.<br>
+            그래서 저는 <strong>종목 하나를 먼저 정해 개발하여 시간을 효율적으로 활용하고, 타 종목들에 대해서는 추후 업데이트를 통해 추가해 나갈 예정</strong>입니다.
+          </p>
+          <hr class="resume-hr">
+          <p class="resume-p">
+            대학에서 강의를 듣던 어느 날, 생성형 AI를 활용하여 코딩을 하는 <strong>'바이브 코딩'</strong>을 접목하였습니다. 이 과정에서 생성형 AI를 어떻게 활용해야 하는지, 그리고 이를 통해 내가 원하는 결과물을 만드려면 <strong>수 많은 시간과 노력이 필요하다는 것</strong>을 깨달았습니다.
+          </p>
+          <hr class="resume-hr">
+          <p class="resume-p">
+            이러한 경험을 토대로, 저는 우선 생성형 AI를 활용하여 제가 생각해본 앱의 UI 화면을 가상으로 만들어 보고, 실제 앱을 어떻게 만들어야 할지 구성해보았습니다. 그 결과, 축구, 야구, 농구 등 각종 스포츠에서 쓰이는 용어를 사전처럼 소개해주는 것 뿐만 아니라 <strong>중계 영상(ex. 유튜브) 속에서도 용어와 표현을 배울 수 있는 환경</strong>을 조성할 수 있다고 생각했습니다.
+          </p>
+          <hr class="resume-hr">
+          <p class="resume-p">
+            제가 직접 앱을 만드는 것이 처음에는 다소 어렵게 다가왔습니다. 그것을 다른 사람들이 사용하는 모습을 본다면 저에게 뿌듯함과 스포츠 팬들이 유익한 경험을 할 수 있겠다는 생각이 저를 포기하지 않게 하는 것 같습니다. <strong>저는 성공적인 앱 개발을 위해 끝까지 여정을 이어나가겠습니다.</strong>
+          </p>
+        </div>
+      </div>
+      <div class="resume-modal-footer">
+        <span class="modal-footer-note"><i class="fa-solid fa-heart text-green"></i> 스포츠 팬들을 위한 유익한 경험을 만들어갑니다.</span>
+        <button class="btn btn-secondary" id="btnCloseResumeModalBottom">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <div class="footer-brand">
+          <span class="sim-badge-s">S</span>
+          <strong>서정관 (Jeonggwan Seo)</strong>
+        </div>
+        <p class="footer-text">
+          전북대학교 재학 | 스포츠 중계 영어 사전 SIM(Searching in Matches) 기획 및 개발자
+        </p>
+      </div>
+
+      <div class="footer-right">
+        <div class="footer-links">
+          <a href="https://match-speak-buddy.lovable.app/" target="_blank" rel="noopener noreferrer"
+            class="footer-link-btn">
+            <i class="fa-solid fa-bolt"></i> SIM 바로가기
+          </a>
+        </div>
+        <p class="footer-copy">© 2026 Jeonggwan Seo. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

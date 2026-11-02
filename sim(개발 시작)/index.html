@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071018">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem("sim.theme");
+      if (savedTheme === "light" || savedTheme === "dark") {
+        document.documentElement.dataset.theme = savedTheme;
+        document.querySelector('meta[name="theme-color"]').content = savedTheme === "light" ? "#ffffff" : "#071018";
+      }
+    } catch (error) {}
+  </script>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="SIM — 축구 중계 속 영어를 사전으로 찾고, 유튜브 영상 속 표현을 시간축으로 설명해 주는 앱">
+  <title>SIM · 축구 중계 속 영어</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/app.css?v=1101">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="brand" href="#/">
+        <span class="brand-mark">S</span>
+        <span>
+          <strong>SIM</strong>
+          <small>Searching in Matches</small>
+        </span>
+      </a>
+      <nav class="side-nav" aria-label="주요 메뉴">
+        <button type="button" data-nav="home"><i class="fa-solid fa-house"></i> 홈</button>
+        <button type="button" data-nav="dict"><i class="fa-solid fa-book-open"></i> 사전</button>
+        <button type="button" data-nav="match"><i class="fa-brands fa-youtube"></i> 중계 분석</button>
+        <button type="button" data-nav="saved"><i class="fa-solid fa-bookmark"></i> 저장</button>
+        <button type="button" data-nav="settings"><i class="fa-solid fa-gear"></i> 설정</button>
+      </nav>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <a class="brand brand-compact" href="#/">
+          <span class="brand-mark">S</span>
+          <span class="brand-name">SIM</span>
+        </a>
+        <div class="topbar-title">
+          <p class="eyebrow">Football commentary</p>
+          <h1 id="view-title">축구 중계 속 영어</h1>
+        </div>
+        <span class="sport-pill"><i class="fa-solid fa-futbol"></i> 축구</span>
+      </header>
+
+      <main class="main">
+        <section class="view" data-view="home">
+          <form class="search" id="home-search-form">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="home-search" type="search" enterkeyhint="search" placeholder="용어, 뜻, 예문으로 검색 (예: 오프사이드 트랩)" autocomplete="off">
+            <button type="submit" class="btn btn-primary">검색</button>
+          </form>
+          <div id="home-mount"></div>
+        </section>
+
+        <section class="view" data-view="dict" hidden>
+          <label class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="dict-search" type="search" enterkeyhint="search" placeholder="영어, 한글, 해설 예문으로 찾기" autocomplete="off">
+          </label>
+          <div class="chips" id="cat-chips" role="tablist" aria-label="분류"></div>
+          <p class="result-count" id="dict-count"></p>
+          <div class="dict-grid" id="dict-list"></div>
+        </section>
+
+        <section class="view" data-view="match" hidden>
+          <div class="match-layout">
+            <div class="match-stage">
+              <div class="panel">
+                <div class="panel-head">
+                  <h2>중계 영상</h2>
+                  <p>유튜브 주소를 넣고 표현 찾기를 누르면, 그 영상의 자막 또는 음성을 읽어 용어를 시간 순서로 정리합니다.</p>
+                </div>
+                <label class="url-row">
+                  <i class="fa-brands fa-youtube"></i>
+                  <input id="yt-url" type="url" inputmode="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+                </label>
+                <div class="row-actions">
+                  <button type="button" class="btn btn-primary" id="extract-btn" data-action="extract-broadcast">
+                    <i class="fa-solid fa-magnifying-glass"></i> 표현 찾기
+                  </button>
+                  <button type="button" class="btn btn-ghost" data-action="load-video">
+                    <i class="fa-solid fa-play"></i> 영상 열기
+                  </button>
+                  <a class="btn btn-ghost" id="open-youtube" href="#" target="_blank" rel="noopener" hidden>유튜브에서 열기</a>
+                </div>
+                <div class="player-frame" id="player-frame">
+                  <div id="yt-player"></div>
+                  <div class="player-empty" id="player-empty">
+                    <i class="fa-brands fa-youtube"></i>
+                    <p>주소를 붙이면 여기에 중계 영상이 열립니다.<br>표현을 누르면 그 시각으로 이동합니다.</p>
+                  </div>
+                  <div class="player-blocked" id="player-blocked" hidden>
+                    <p>이 영상은 다른 사이트에서의 재생이 막혀 있습니다. 표현 찾기는 그대로 되고, 재생은 유튜브에서 열면 됩니다.</p>
+                  </div>
+                </div>
+                <p class="status" id="match-status" role="status"></p>
+              </div>
+            </div>
+
+            <div class="match-results panel" id="results-panel">
+              <div class="panel-head">
+                <h2>찾은 표현</h2>
+                <p id="hit-summary">주소를 넣고 표현 찾기를 누르면, 그 영상의 표현만 시간 순서로 쌓입니다.</p>
+              </div>
+              <div class="video-tabs" id="video-tabs" hidden></div>
+              <div class="chips" id="hit-filters" hidden></div>
+              <div id="hit-list" class="hit-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="saved" hidden>
+          <div id="saved-mount"></div>
+        </section>
+
+        <section class="view" data-view="settings" hidden>
+          <article class="panel settings-page">
+            <div class="panel-head">
+              <h2>화면 설정</h2>
+              <p>밝은 화면과 어두운 화면 중 하나를 고르면 이 기기에 저장됩니다.</p>
+            </div>
+            <p class="settings-label">환경</p>
+            <div class="theme-choices">
+              <button type="button" class="theme-choice" data-action="set-theme" data-theme="dark">
+                <i class="fa-solid fa-moon" aria-hidden="true"></i>
+                <span>다크 모드</span>
+              </button>
+              <button type="button" class="theme-choice" data-action="set-theme" data-theme="light">
+                <i class="fa-solid fa-sun" aria-hidden="true"></i>
+                <span>라이트 모드</span>
+              </button>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <nav class="tabbar" aria-label="모바일 메뉴">
+      <button type="button" data-nav="home"><i class="fa-solid fa-house"></i><span>홈</span></button>
+      <button type="button" data-nav="dict"><i class="fa-solid fa-book-open"></i><span>사전</span></button>
+      <button type="button" data-nav="match"><i class="fa-brands fa-youtube"></i><span>중계</span></button>
+      <button type="button" data-nav="saved"><i class="fa-solid fa-bookmark"></i><span>저장</span></button>
+      <button type="button" data-nav="settings"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>설정</span></button>
+    </nav>
+  </div>
+
+  <div class="sheet" id="sheet" hidden>
+    <button type="button" class="sheet-backdrop" data-action="close-sheet" aria-label="설명 닫기"></button>
+    <article class="sheet-panel" id="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title"></article>
+  </div>
+
+  <script src="js/dictionary.js"></script>
+  <script src="js/samples.js"></script>
+  <script src="js/analyze.js"></script>
+  <script src="js/app.js?v=1104"></script>
+</body>
+</html>
