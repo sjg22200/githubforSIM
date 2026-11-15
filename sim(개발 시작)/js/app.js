@@ -2,6 +2,9 @@
   const SAVE_KEY = "sim.saved.v1";
   const THEME_KEY = "sim.theme";
   const BROADCAST_KEY = "sim.broadcasts.v1";
+  const LEXICON_KEY = "sim.lexicon.v1";
+  const BASE_TERMS = (window.SIM_TERMS || []).slice();
+  const ENTRY_CATS = new Set(["law", "tactic", "attack", "defense", "setpiece", "keeper", "player", "slang"]);
   const TITLES = {
     home: "축구 중계 속 영어",
     dict: "중계 영어 사전",
@@ -22,6 +25,7 @@
   let player = null;
   let playerReady = false;
   let pendingVideo = "";
+  const translateStarted = new Set();
 
   const $ = (id) => document.getElementById(id);
 
@@ -51,21 +55,108 @@
     localStorage.setItem(BROADCAST_KEY, JSON.stringify(state.broadcasts));
   }
 
-  function currentTheme() {
-    return document.documentElement.dataset.theme === "light" ? "light" : "dark";
+  function loadLexicon() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(LEXICON_KEY));
+      return Array.isArray(parsed) ? parsed.filter((term) => term && term.id && term.term) : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function aliasKey(name) {
+    return String(name || "").trim().toLowerCase();
+  }
+
+  function applyLexicon(extra) {
+    const taken = new Set();
+    BASE_TERMS.forEach((term) => {
+      taken.add(aliasKey(term.id));
+      taken.add(aliasKey(term.term));
+      (term.aliases || []).forEach((alias) => taken.add(aliasKey(alias)));
+    });
+    const merged = BASE_TERMS.slice();
+    extra.forEach((term) => {
+      const aliases = [term.term, ...(term.aliases || [])].map(aliasKey).filter((alias) => alias.length >= 3);
+      if (!aliases.length || aliases.some((alias) => taken.has(alias)) || taken.has(aliasKey(term.id))) return;
+      aliases.forEach((alias) => taken.add(alias));
+      taken.add(aliasKey(term.id));
+      merged.push(term);
+    });
+    window.SIM_TERMS = merged;
+    if (window.SIM && window.SIM.refreshPatterns) window.SIM.refreshPatterns();
+  }
+
+  function learnedId(name) {
+    const slug = aliasKey(name).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+    return `learned-${slug || "term"}`;
+  }
+
+  function registerLearned(items) {
+    const stored = new Map(loadLexicon().map((term) => [term.id, term]));
+    items.forEach((item) => {
+      if (!item || !item.fresh || !item.term || !item.ko || !(item.blurb || item.explain)) return;
+      const id = learnedId(item.term);
+      const blurb = item.blurb || item.explain;
+      stored.set(id, {
+        id,
+        term: item.term,
+        ko: item.ko,
+        say: item.say || "",
+        cat: ENTRY_CATS.has(item.cat) ? item.cat : "slang",
+        blurb,
+        body: item.body || blurb,
+        usage: item.usage || "",
+        example: item.quote || "",
+        exampleKo: item.exampleKo || "",
+        aliases: [aliasKey(item.term)],
+        related: [],
+        learned: true
+      });
+      item.dictId = id;
+    });
+    const extra = [...stored.values()];
+    localStorage.setItem(LEXICON_KEY, JSON.stringify(extra));
+    applyLexicon(extra);
+    items.forEach((item) => {
+      if (item && item.dictId && !window.SIM.termById(item.dictId)) item.dictId = "";
+    });
+  }
+
+  function glossLine(term) {
+    return term.say ? `${term.ko} · ${term.say}` : term.ko;
+  }
+
+  function systemTheme() {
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  }
+
+  function savedThemeChoice() {
+    const saved = localStorage.getItem(THEME_KEY);
+    return saved === "light" || saved === "dark" || saved === "system" ? saved : "dark";
   }
 
   function applyTheme(theme) {
-    const next = theme === "light" ? "light" : "dark";
+    const choice = theme === "light" || theme === "system" ? theme : "dark";
+    const next = choice === "system" ? systemTheme() : choice;
     document.documentElement.dataset.theme = next;
-    localStorage.setItem(THEME_KEY, next);
+    localStorage.setItem(THEME_KEY, choice);
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = next === "light" ? "#ffffff" : "#071018";
     document.querySelectorAll('[data-action="set-theme"]').forEach((button) => {
-      const on = button.dataset.theme === next;
+      const on = button.dataset.theme === choice;
       button.classList.toggle("is-active", on);
       button.setAttribute("aria-pressed", String(on));
     });
+  }
+
+  function watchSystemTheme() {
+    const query = window.matchMedia("(prefers-color-scheme: light)");
+    const follow = () => {
+      if (localStorage.getItem(THEME_KEY) === "system") applyTheme("system");
+    };
+    if (query.addEventListener) query.addEventListener("change", follow);
+    else query.addListener(follow);
   }
 
   function escapeHtml(value) {
@@ -131,7 +222,7 @@
     if (state.view === "home") renderHome();
     if (state.view === "dict") renderDict();
     if (state.view === "saved") renderSaved();
-    if (state.view === "settings") applyTheme(currentTheme());
+    if (state.view === "settings") applyTheme(savedThemeChoice());
     if (state.view === "match") {
       const typed = window.SIM.parseVideoId($("yt-url").value);
       if (typed && typed !== state.activeVideoId) {
@@ -173,7 +264,7 @@
       <article class="hero-card">
         <span class="kicker">오늘의 표현</span>
         <h2>${escapeHtml(term.term)}</h2>
-        <p class="say">${escapeHtml(term.say)} · ${escapeHtml(term.ko)}</p>
+        <p class="say">${escapeHtml(term.say ? `${term.say} · ${term.ko}` : term.ko)}</p>
         <p>${escapeHtml(term.blurb)}</p>
         <blockquote class="quote">
           <p>${escapeHtml(term.example)}</p>
@@ -243,8 +334,8 @@
           <span class="cat">${escapeHtml(catLabel(term.cat))}</span>
           ${bookmarkButton(term.id)}
         </div>
-        <h3>${escapeHtml(term.term)}</h3>
-        <p class="say">${escapeHtml(term.ko)} · ${escapeHtml(term.say)}</p>
+        <h3>${escapeHtml(term.term)}${term.learned ? ` <span class="ko-name">영상에서 추가</span>` : ""}</h3>
+        <p class="say">${escapeHtml(glossLine(term))}</p>
         <p class="clamp">${escapeHtml(term.blurb)}</p>
         <button type="button" class="text-btn" data-action="open-term" data-id="${term.id}" style="padding:0.45rem 0.7rem;align-self:flex-start">설명 열기</button>
       </article>`).join("");
@@ -289,7 +380,7 @@
         </span>
       </div>
       <h2 id="sheet-title">${escapeHtml(term.term)}</h2>
-      <p class="say">${escapeHtml(term.ko)} · ${escapeHtml(term.say)}</p>
+      <p class="say">${escapeHtml(glossLine(term))}</p>
       <div class="row-actions">
         <button type="button" class="btn btn-ghost" data-action="speak-term" data-id="${term.id}"><i class="fa-solid fa-volume-high"></i> 용어 발음</button>
         <button type="button" class="btn btn-ghost" data-action="speak-example" data-id="${term.id}"><i class="fa-solid fa-microphone-lines"></i> 예문 듣기</button>
@@ -421,7 +512,7 @@
 
     if (pendingId && pendingId === state.activeVideoId) {
       $("hit-summary").textContent = "이 영상을 정리하는 중입니다. 끝나면 이 영상 탭에만 시간순으로 쌓입니다.";
-      $("hit-list").innerHTML = `<div class="empty">자막 또는 음성을 읽고 있습니다.</div>`;
+      $("hit-list").innerHTML = `<div class="empty">영상 전체를 받아쓰고 있습니다.</div>`;
       return;
     }
 
@@ -431,10 +522,11 @@
       $("hit-list").innerHTML = "";
       return;
     }
-    const items = current.items || [];
+    const items = onceEach(current.items || []);
     const title = current.title || "이 영상";
+    const freshCount = items.filter((item) => item.fresh).length;
     $("hit-summary").textContent = items.length
-      ? `${title} · 사전 ${items.filter((item) => item.dictId).length}개, 이 영상에서 새로 ${items.filter((item) => !item.dictId).length}개. 시각을 누르면 그 장면으로 이동합니다.`
+      ? `${title} · 사전 ${items.length - freshCount}개, 새로 등록 ${freshCount}개. 시각을 누르면 그 장면으로 이동합니다.`
       : `${title}에서 중계 용어를 찾지 못했습니다.`;
     if (!items.length) {
       $("hit-list").innerHTML = `<div class="empty">이 영상에서는 정리된 표현이 없습니다.</div>`;
@@ -442,24 +534,28 @@
     }
     $("hit-list").innerHTML = items.map((item, index) => {
       const local = item.dictId ? window.SIM.termById(item.dictId) : localTermFor(item.term);
+      const meaning = item.ko || (local && local.ko) || "";
       const termTitle = local
         ? `<button type="button" data-action="open-term" data-id="${escapeHtml(local.id)}">${escapeHtml(item.term)}</button>`
         : `<span class="term-plain">${escapeHtml(item.term)}</span>`;
+      const aliases = [item.surface, item.term, ...(local ? [local.term, ...(local.aliases || [])] : [])];
       return `
         <article class="hit" data-video="${escapeHtml(current.id)}">
           <div class="hit-top">
             <button type="button" class="time-btn" data-action="seek" data-time="${Number(item.time) || 0}"><i class="fa-solid fa-play"></i> ${formatTime(item.time)}</button>
             ${local ? bookmarkButton(local.id) : ""}
           </div>
-          <h3>${termTitle}${item.dictId ? ` <span class="ko-name">사전</span>` : ""}${item.ko ? ` <span class="ko-name">${escapeHtml(item.ko)}</span>` : ""}</h3>
-          ${item.quote ? `<p class="hit-quote">${quoteHtml(item.quote, item.term)}</p>` : ""}
-          ${item.explain ? `<p class="hit-blurb">${escapeHtml(item.explain)}</p>` : ""}
+          <h3>${termTitle}</h3>
+          ${meaning ? `<p class="hit-meaning">${escapeHtml(meaning)}</p>` : ""}
+          ${item.quote ? `<p class="hit-quote">${emphasize(item.quote, aliases, true)}</p>` : ""}
+          ${item.quoteKo ? `<p class="hit-ko">${emphasize(item.quoteKo, [meaning], false)}</p>` : ""}
           <div class="row-actions">
-            ${local ? `<button type="button" class="btn btn-ghost" data-action="open-term" data-id="${escapeHtml(local.id)}">사전 설명</button>` : ""}
+            ${local ? `<button type="button" class="btn btn-ghost" data-action="open-term" data-id="${escapeHtml(local.id)}">${item.fresh ? "표현 설명" : "사전 설명"}</button>` : ""}
             <button type="button" class="btn btn-ghost" data-action="speak-hit" data-index="${index}">예문 듣기</button>
           </div>
         </article>`;
     }).join("");
+    ensureQuoteTranslations(current);
   }
 
   function showBroadcast(id) {
@@ -506,36 +602,86 @@
     "model-empty": "이 영상에서 중계 용어를 찾지 못했습니다."
   };
 
-  function quoteHtml(quote, term) {
-    const text = String(quote || "");
-    const re = new RegExp(`(?<![A-Za-z0-9])${String(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![A-Za-z0-9])`, "i");
-    const match = text.match(re);
-    if (!match) return escapeHtml(text);
-    const index = match.index;
-    return `${escapeHtml(text.slice(0, index))}<mark>${escapeHtml(match[0])}</mark>${escapeHtml(text.slice(index + match[0].length))}`;
+  function onceEach(items) {
+    const sorted = [...items].sort((a, b) => (Number(a.time) || 0) - (Number(b.time) || 0));
+    const seen = new Set();
+    return sorted.filter((item) => {
+      const key = String(item.dictId || item.term || "").trim().toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function emphasize(text, phrases, english) {
+    const raw = String(text || "");
+    const names = [...new Set((phrases || []).map((phrase) => String(phrase || "").trim()).filter((phrase) => phrase.length >= 2))]
+      .sort((a, b) => b.length - a.length);
+    for (const name of names) {
+      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const re = english
+        ? new RegExp(`(?<![A-Za-z0-9])${escaped}(?![A-Za-z0-9])`, "i")
+        : new RegExp(escaped);
+      const match = raw.match(re);
+      if (!match) continue;
+      const index = match.index;
+      return `${escapeHtml(raw.slice(0, index))}<mark>${escapeHtml(match[0])}</mark>${escapeHtml(raw.slice(index + match[0].length))}`;
+    }
+    return escapeHtml(raw);
+  }
+
+  async function translateQuotes(items) {
+    const missing = items.filter((item) => item && item.quote && !item.quoteKo);
+    const step = 8;
+    for (let offset = 0; offset < missing.length; offset += step) {
+      const batch = missing.slice(offset, offset + step);
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lines: batch.map((item) => item.quote) })
+      });
+      const data = await response.json();
+      if (!response.ok || data.error) return;
+      const lines = Array.isArray(data.lines) ? data.lines : (data.lines ? [data.lines] : []);
+      batch.forEach((item, index) => {
+        if (lines[index]) item.quoteKo = String(lines[index]);
+      });
+    }
+  }
+
+  function ensureQuoteTranslations(record) {
+    if (!record || translateStarted.has(record.id)) return;
+    const visible = onceEach(record.items || []);
+    if (!visible.some((item) => item.quote && !item.quoteKo)) return;
+    translateStarted.add(record.id);
+    translateQuotes(visible).then(() => {
+      record.items = onceEach(record.items || []);
+      persistBroadcasts();
+      if (state.activeVideoId === record.id && state.view === "match") renderBroadcasts();
+    }).catch(() => {
+      translateStarted.delete(record.id);
+    });
   }
 
   function dictionaryTimeline(cues) {
     const rows = (Array.isArray(cues) ? cues : (cues ? [cues] : [])).map((cue) => ({
       start: Number(cue.start) || 0,
       text: String(cue.text || "")
-    })).filter((cue) => cue.text);
+    })).filter((cue) => cue.text).sort((a, b) => a.start - b.start);
     if (!rows.length || !window.SIM || !window.SIM.findInCues) return [];
     const kept = [];
-    const lastAt = new Map();
+    const seen = new Set();
     window.SIM.findInCues(rows).forEach((hit) => {
+      if (seen.has(hit.id)) return;
       const term = window.SIM.termById(hit.id);
       if (!term) return;
-      const previous = lastAt.get(term.id);
-      if (previous != null && hit.time - previous < 20) return;
-      if (kept.filter((item) => item.dictId === term.id).length >= 4) return;
-      lastAt.set(term.id, hit.time);
+      seen.add(hit.id);
       kept.push({
         time: hit.time,
         term: term.term,
+        surface: hit.surface,
         quote: hit.quote,
         ko: term.ko,
-        explain: term.blurb,
         dictId: term.id
       });
     });
@@ -550,10 +696,17 @@
       term: item.term,
       quote: item.quote,
       ko: item.ko || "",
-      explain: item.explain || "",
-      dictId: ""
+      explain: item.blurb || item.explain || "",
+      say: item.say || "",
+      cat: item.cat || "slang",
+      blurb: item.blurb || item.explain || "",
+      body: item.body || "",
+      usage: item.usage || "",
+      exampleKo: item.exampleKo || "",
+      dictId: "",
+      fresh: true
     }));
-    return dict.concat(novel).sort((a, b) => a.time - b.time);
+    return onceEach(dict.concat(novel));
   }
 
   async function extractBroadcast() {
@@ -571,12 +724,19 @@
     $("yt-url").value = url;
     cueVideo(videoId);
     renderBroadcasts();
-    setStatus("이 영상의 자막 또는 음성을 읽는 중입니다. 음성이면 1~2분 걸릴 수 있습니다.", "ok");
+    setStatus("영상 전체를 받아쓰고 표현을 찾는 중입니다. 길면 몇 분 걸릴 수 있습니다.", "ok");
     try {
+      const known = [];
+      window.SIM_TERMS.forEach((term) => {
+        [term.term, ...(term.aliases || [])].forEach((alias) => {
+          const clean = String(alias || "").trim();
+          if (clean.length >= 3) known.push(clean);
+        });
+      });
       const response = await fetch("/api/broadcast", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url })
+        body: JSON.stringify({ url, known })
       });
       const data = await response.json();
       if (!response.ok || data.error) {
@@ -584,6 +744,8 @@
         return;
       }
       const items = mergeTimeline(data.items, data.cues);
+      registerLearned(items);
+      await translateQuotes(items);
       if (!items.length) {
         setStatus("이 영상에서 중계 용어를 찾지 못했습니다.", "warn");
         return;
@@ -680,7 +842,7 @@
       speak(action === "speak-term" ? term.term : term.example);
     } else if (action === "speak-hit") {
       const current = activeBroadcast();
-      const item = current && current.items[Number(target.dataset.index)];
+      const item = current && onceEach(current.items)[Number(target.dataset.index)];
       if (item) speak(item.quote || item.term);
     } else if (action === "filter-cat") {
       state.category = target.dataset.cat;
@@ -710,6 +872,14 @@
   $("dict-search").addEventListener("input", () => {
     if (state.view === "dict") renderDict();
   });
+  $("dict-search").addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    renderDict();
+  });
+  $("dict-search").addEventListener("search", () => {
+    if (state.view === "dict") renderDict();
+  });
 
   function searchFromHome(event) {
     if (event) event.preventDefault();
@@ -721,6 +891,14 @@
   }
 
   $("home-search-form").addEventListener("submit", searchFromHome);
+  $("home-search").addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    searchFromHome(event);
+  });
+  $("home-search").addEventListener("search", () => {
+    if ($("home-search").value.trim()) searchFromHome();
+  });
 
   $("yt-url").addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
@@ -735,9 +913,11 @@
 
   window.addEventListener("hashchange", routeFromHash);
 
+  applyLexicon(loadLexicon());
   bootCategories();
   if (state.broadcasts.length) state.activeVideoId = state.broadcasts[state.broadcasts.length - 1].id;
-  applyTheme(localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark");
+  applyTheme(savedThemeChoice());
+  watchSystemTheme();
   if (!location.hash) location.replace("#/");
   routeFromHash();
 })();

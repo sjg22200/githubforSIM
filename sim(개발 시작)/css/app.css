@@ -77,6 +77,22 @@ html[data-theme="light"] {
 
 @font-face {
   font-family: "SIM UI";
+  src: url("../fonts/OpenSans-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF, U+2100-214F;
+}
+@font-face {
+  font-family: "SIM UI";
+  src: url("../fonts/OpenSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF, U+2100-214F;
+}
+@font-face {
+  font-family: "SIM UI";
   src: url("../fonts/OpenSans-Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
@@ -156,9 +172,9 @@ a { color: var(--green-2); }
   color: var(--green-ink);
   font-weight: 500;
 }
-.brand strong { display: block; font-size: 1rem; font-weight: 300; }
-.brand small { display: block; color: var(--muted); font-size: 0.72rem; }
-.brand-compact .brand-name { font-weight: 300; }
+.brand strong { display: block; font-size: 1rem; font-weight: 600; }
+.brand small { display: block; color: var(--muted); font-size: 0.72rem; font-weight: 600; }
+.brand-compact .brand-name { font-weight: 600; }
 .topbar-title { flex: 1; min-width: 0; }
 .topbar-title h1 {
   margin: 0;
@@ -236,7 +252,7 @@ a { color: var(--green-2); }
   padding: 0.35rem 0.4rem 0.35rem 1rem;
 }
 .search .btn, .url-row .btn { border-radius: 999px; padding: 0.62rem 0.9rem; }
-.search { margin-bottom: 0.9rem; }
+.search { margin-bottom: 0.9rem; padding-right: 1rem; }
 .search:focus-within, .url-row:focus-within {
   border-color: rgba(16, 185, 129, 0.7);
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
@@ -497,12 +513,16 @@ textarea {
 .hit h3 { margin: 0; font-size: 1rem; }
 .hit h3 button, .hit h3 .term-plain { border: 0; background: transparent; padding: 0; font-weight: 500; }
 .ko-name { color: var(--faint); font-size: 0.8rem; font-weight: 300; }
-.hit-quote { margin: 0.45rem 0; color: var(--hit-quote); font-size: 0.92rem; }
-.hit-quote mark {
-  background: var(--mark-bg);
-  color: var(--mark-text);
-  border-radius: 4px;
-  padding: 0 0.15rem;
+.hit-meaning { margin: 0.28rem 0 0; color: var(--faint); font-size: 0.92rem; font-weight: 300; }
+.hit-quote { margin: 0.55rem 0 0; color: var(--hit-quote); font-size: 0.92rem; }
+.hit-ko { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.84rem; }
+.hit-quote mark, .hit-ko mark {
+  background: transparent;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
+  text-decoration-thickness: 1px;
+  padding: 0;
 }
 .hit-blurb { margin: 0; color: var(--muted); font-size: 0.84rem; }
 .empty {

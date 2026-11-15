@@ -7,9 +7,12 @@
   <script>
     try {
       var savedTheme = localStorage.getItem("sim.theme");
-      if (savedTheme === "light" || savedTheme === "dark") {
-        document.documentElement.dataset.theme = savedTheme;
-        document.querySelector('meta[name="theme-color"]').content = savedTheme === "light" ? "#ffffff" : "#071018";
+      var theme = savedTheme === "system"
+        ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+        : savedTheme;
+      if (theme === "light" || theme === "dark") {
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === "light" ? "#ffffff" : "#071018";
       }
     } catch (error) {}
   </script>
@@ -20,7 +23,7 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="css/app.css?v=1101">
+  <link rel="stylesheet" href="css/app.css?v=1118">
 </head>
 <body>
   <div class="app">
@@ -59,7 +62,6 @@
           <form class="search" id="home-search-form">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input id="home-search" type="search" enterkeyhint="search" placeholder="용어, 뜻, 예문으로 검색 (예: 오프사이드 트랩)" autocomplete="off">
-            <button type="submit" class="btn btn-primary">검색</button>
           </form>
           <div id="home-mount"></div>
         </section>
@@ -80,7 +82,7 @@
               <div class="panel">
                 <div class="panel-head">
                   <h2>중계 영상</h2>
-                  <p>유튜브 주소를 넣고 표현 찾기를 누르면, 그 영상의 자막 또는 음성을 읽어 용어를 시간 순서로 정리합니다.</p>
+                  <p>유튜브 주소를 넣고 표현 찾기를 누르면, 영상 전체의 말소리를 받아쓴 뒤 사전에 있는 용어와 새로 찾은 표현을 시간 순서로 정리합니다.</p>
                 </div>
                 <label class="url-row">
                   <i class="fa-brands fa-youtube"></i>
@@ -129,7 +131,7 @@
           <article class="panel settings-page">
             <div class="panel-head">
               <h2>화면 설정</h2>
-              <p>밝은 화면과 어두운 화면 중 하나를 고르면 이 기기에 저장됩니다.</p>
+              <p>고른 화면은 이 기기에 저장됩니다. 사용자 환경에 맞추기는 브라우저 설정을 따릅니다.</p>
             </div>
             <p class="settings-label">환경</p>
             <div class="theme-choices">
@@ -140,6 +142,10 @@
               <button type="button" class="theme-choice" data-action="set-theme" data-theme="light">
                 <i class="fa-solid fa-sun" aria-hidden="true"></i>
                 <span>라이트 모드</span>
+              </button>
+              <button type="button" class="theme-choice" data-action="set-theme" data-theme="system">
+                <i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i>
+                <span>사용자 환경에 맞추기</span>
               </button>
             </div>
           </article>
@@ -163,7 +169,7 @@
 
   <script src="js/dictionary.js"></script>
   <script src="js/samples.js"></script>
-  <script src="js/analyze.js"></script>
-  <script src="js/app.js?v=1104"></script>
+  <script src="js/analyze.js?v=1105"></script>
+  <script src="js/app.js?v=1119"></script>
 </body>
 </html>

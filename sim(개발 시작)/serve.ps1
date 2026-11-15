@@ -1,4 +1,4 @@
-﻿$root = $PSScriptRoot
+$root = $PSScriptRoot
 $port = 8787
 $addresses = [System.Collections.Generic.List[string]]::new()
 $addresses.Add("localhost")
@@ -53,7 +53,28 @@ while ($listener.IsListening) {
   $context = $listener.GetContext()
   try {
     $path = $context.Request.Url.AbsolutePath
-    if ($context.Request.HttpMethod -eq "POST" -and $path -eq "/api/broadcast") {
+    if ($context.Request.HttpMethod -eq "POST" -and $path -eq "/api/translate") {
+      try {
+        $reader = New-Object System.IO.StreamReader($context.Request.InputStream, [Text.Encoding]::UTF8)
+        $rawBody = $reader.ReadToEnd()
+        $reader.Dispose()
+        $incoming = $null
+        if ($rawBody) { $incoming = $rawBody | ConvertFrom-Json }
+        $lines = @()
+        if ($incoming) { $lines = $incoming.lines }
+        $translated = Get-QuoteTranslations $lines
+        $parts = New-Object System.Collections.Generic.List[string]
+        foreach ($line in $translated) { $parts.Add('"' + (ConvertTo-JsonString ([string]$line)) + '"') }
+        $json = '{"lines":[' + ($parts -join ",") + ']}'
+        $bytes = [Text.Encoding]::UTF8.GetBytes($json)
+        $context.Response.StatusCode = 200
+        $context.Response.ContentType = "application/json; charset=utf-8"
+        $context.Response.ContentLength64 = $bytes.Length
+        $context.Response.OutputStream.Write($bytes, 0, $bytes.Length)
+      } catch {
+        Write-SimJson $context 400 @{ error = "model-failed" }
+      }
+    } elseif ($context.Request.HttpMethod -eq "POST" -and $path -eq "/api/broadcast") {
       try {
         $reader = New-Object System.IO.StreamReader($context.Request.InputStream, [Text.Encoding]::UTF8)
         $rawBody = $reader.ReadToEnd()
@@ -61,8 +82,12 @@ while ($listener.IsListening) {
         $incoming = $null
         if ($rawBody) { $incoming = $rawBody | ConvertFrom-Json }
         $videoUrl = ""
-        if ($incoming) { $videoUrl = [string]$incoming.url }
-        $result = Get-BroadcastTimeline -VideoUrl $videoUrl
+        $known = @()
+        if ($incoming) {
+          $videoUrl = [string]$incoming.url
+          if ($incoming.known) { $known = @($incoming.known) }
+        }
+        $result = Get-BroadcastTimeline -VideoUrl $videoUrl -Known $known
         Write-SimJson $context 200 $result
       } catch {
         $code = ([string]$_.Exception.Message).Trim()

@@ -26,6 +26,10 @@
     return cachedPatterns;
   }
 
+  function refreshPatterns() {
+    cachedPatterns = null;
+  }
+
   function parseClock(value) {
     if (value == null) return 0;
     const raw = String(value).trim().replace(",", ".");
@@ -321,6 +325,7 @@
     parseTranscript,
     findInText,
     findInCues,
+    refreshPatterns,
     fetchCaptions,
     termById(id) {
       return terms().find((term) => term.id === id) || null;
