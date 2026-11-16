@@ -53,7 +53,14 @@ while ($listener.IsListening) {
   $context = $listener.GetContext()
   try {
     $path = $context.Request.Url.AbsolutePath
-    if ($context.Request.HttpMethod -eq "POST" -and $path -eq "/api/translate") {
+    if ($context.Request.HttpMethod -eq "GET" -and $path -eq "/api/supabase-config") {
+      $config = Get-SupabasePublicConfig
+      if ($config.ok) {
+        Write-SimJson $context 200 @{ url = [string]$config.url; publishableKey = [string]$config.publishableKey }
+      } else {
+        Write-SimJson $context 503 @{ error = [string]$config.error }
+      }
+    } elseif ($context.Request.HttpMethod -eq "POST" -and $path -eq "/api/translate") {
       try {
         $reader = New-Object System.IO.StreamReader($context.Request.InputStream, [Text.Encoding]::UTF8)
         $rawBody = $reader.ReadToEnd()

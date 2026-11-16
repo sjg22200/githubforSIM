@@ -22,17 +22,48 @@ function ConvertTo-JsonString([string]$text) {
   return $builder.ToString()
 }
 
-function Read-SimKeys {
-  $envFile = Join-Path (Split-Path $PSScriptRoot -Parent) "practice1022\.env"
+function Read-DotEnvFile([string]$envFile) {
   $keys = @{}
   if (-not (Test-Path -LiteralPath $envFile)) { return $keys }
   foreach ($line in [IO.File]::ReadAllLines($envFile, [Text.Encoding]::UTF8)) {
     $trimmed = $line.Trim()
     if (-not $trimmed -or $trimmed.StartsWith("#") -or -not $trimmed.Contains("=")) { continue }
     $parts = $trimmed.Split("=", 2)
-    $keys[$parts[0].Trim()] = $parts[1].Trim()
+    $keys[$parts[0].Trim()] = $parts[1].Trim().Trim('"').Trim("'")
   }
   return $keys
+}
+
+function Read-SimKeys {
+  return Read-DotEnvFile (Join-Path (Split-Path $PSScriptRoot -Parent) "practice1022\.env")
+}
+
+function Test-SupabasePublishableKey([string]$key) {
+  if (-not $key) { return $false }
+  if ($key.StartsWith("sb_secret_")) { return $false }
+  $parts = $key.Split(".")
+  if ($parts.Length -ne 3) { return $true }
+  $payload = $parts[1].Replace("-", "+").Replace("_", "/")
+  switch ($payload.Length % 4) {
+    2 { $payload += "==" }
+    3 { $payload += "=" }
+  }
+  try {
+    $json = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payload))
+  } catch {
+    return $true
+  }
+  return $json -notmatch '"role"\s*:\s*"service_role"'
+}
+
+function Get-SupabasePublicConfig {
+  $keys = Read-DotEnvFile (Join-Path $PSScriptRoot ".env")
+  $url = [string]$keys["SUPABASE_URL"]
+  $publishable = [string]$keys["SUPABASE_PUBLISHABLE_KEY"]
+  if (-not $publishable) { $publishable = [string]$keys["SUPABASE_ANON_KEY"] }
+  if (-not $url -or -not $publishable) { return @{ ok = $false; error = "missing-config" } }
+  if (-not (Test-SupabasePublishableKey $publishable)) { return @{ ok = $false; error = "secret-key-refused" } }
+  return @{ ok = $true; url = $url; publishableKey = $publishable }
 }
 
 function ConvertTo-Seconds($value) {
