@@ -59,7 +59,9 @@ function Test-SupabasePublishableKey([string]$key) {
 function Get-SupabasePublicConfig {
   $keys = Read-DotEnvFile (Join-Path $PSScriptRoot ".env")
   $url = [string]$keys["SUPABASE_URL"]
+  if (-not $url) { $url = [string]$keys["VITE_SUPABASE_URL"] }
   $publishable = [string]$keys["SUPABASE_PUBLISHABLE_KEY"]
+  if (-not $publishable) { $publishable = [string]$keys["VITE_SUPABASE_PUBLISHABLE_KEY"] }
   if (-not $publishable) { $publishable = [string]$keys["SUPABASE_ANON_KEY"] }
   if (-not $url -or -not $publishable) { return @{ ok = $false; error = "missing-config" } }
   if (-not (Test-SupabasePublishableKey $publishable)) { return @{ ok = $false; error = "secret-key-refused" } }

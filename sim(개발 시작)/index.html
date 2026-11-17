@@ -24,7 +24,7 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="css/app.css?v=1118">
+  <link rel="stylesheet" href="css/app.css?v=1121">
 </head>
 <body>
   <div class="app">
@@ -55,6 +55,7 @@
           <p class="eyebrow">Football commentary</p>
           <h1 id="view-title">축구 중계 속 영어</h1>
         </div>
+        <button type="button" class="account-chip" data-action="open-auth" id="account-chip">로그인</button>
         <span class="sport-pill"><i class="fa-solid fa-futbol"></i> 축구</span>
       </header>
 
@@ -129,6 +130,16 @@
         </section>
 
         <section class="view" data-view="settings" hidden>
+          <article class="panel settings-page" id="account-panel" hidden>
+            <div class="panel-head">
+              <h2>계정</h2>
+            </div>
+            <div id="account-signed-in">
+              <p class="account-email" id="account-email"></p>
+              <p class="account-note" id="account-verify-note" hidden>이메일 인증이 아직 끝나지 않았습니다. 받은 메일의 확인 링크를 눌러 주세요.</p>
+              <button type="button" class="btn btn-ghost" data-action="sign-out">로그아웃</button>
+            </div>
+          </article>
           <article class="panel settings-page">
             <div class="panel-head">
               <h2>화면 설정</h2>
@@ -163,15 +174,41 @@
     </nav>
   </div>
 
+  <div class="sheet" id="auth-dialog" hidden>
+    <button type="button" class="sheet-backdrop" data-action="close-auth" aria-label="로그인 닫기"></button>
+    <article class="sheet-panel auth-panel" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <div class="sheet-tools">
+        <h2 id="auth-title">로그인</h2>
+        <button type="button" class="icon-btn" data-action="close-auth" aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="account-note">비밀번호는 이 기기에 저장하지 않습니다.</p>
+      <form id="account-form">
+        <label class="account-field">
+          <span>이메일</span>
+          <input id="account-email-input" type="email" name="email" autocomplete="email" inputmode="email" required>
+        </label>
+        <label class="account-field">
+          <span>비밀번호</span>
+          <input id="account-password-input" type="password" name="password" autocomplete="current-password" minlength="6" required>
+        </label>
+        <div class="row-actions">
+          <button type="submit" class="btn btn-primary">로그인</button>
+          <button type="button" class="btn btn-ghost" data-action="sign-up">회원가입</button>
+        </div>
+        <p class="account-note" id="auth-message" role="status">회원가입을 하면 확인 메일이 갑니다. 메일의 링크를 누른 뒤 같은 이메일과 비밀번호로 로그인하세요.</p>
+      </form>
+    </article>
+  </div>
+
   <div class="sheet" id="sheet" hidden>
     <button type="button" class="sheet-backdrop" data-action="close-sheet" aria-label="설명 닫기"></button>
     <article class="sheet-panel" id="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title"></article>
   </div>
 
-  <script src="js/supabase.js?v=1121"></script>
+  <script src="js/supabase.js?v=1125"></script>
   <script src="js/dictionary.js"></script>
   <script src="js/samples.js"></script>
   <script src="js/analyze.js?v=1105"></script>
-  <script src="js/app.js?v=1119"></script>
+  <script src="js/app.js?v=1129"></script>
 </body>
 </html>
