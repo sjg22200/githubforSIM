@@ -24,7 +24,7 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="css/app.css?v=1121">
+  <link rel="stylesheet" href="css/app.css?v=1133">
 </head>
 <body>
   <div class="app">
@@ -40,6 +40,7 @@
         <button type="button" data-nav="home"><i class="fa-solid fa-house"></i> 홈</button>
         <button type="button" data-nav="dict"><i class="fa-solid fa-book-open"></i> 사전</button>
         <button type="button" data-nav="match"><i class="fa-brands fa-youtube"></i> 중계 분석</button>
+        <button type="button" data-nav="quiz"><i class="fa-solid fa-question"></i> 퀴즈</button>
         <button type="button" data-nav="saved"><i class="fa-solid fa-bookmark"></i> 저장</button>
         <button type="button" data-nav="settings"><i class="fa-solid fa-gear"></i> 설정</button>
       </nav>
@@ -125,6 +126,10 @@
           </div>
         </section>
 
+        <section class="view" data-view="quiz" hidden>
+          <div id="quiz-mount"></div>
+        </section>
+
         <section class="view" data-view="saved" hidden>
           <div id="saved-mount"></div>
         </section>
@@ -169,6 +174,7 @@
       <button type="button" data-nav="home"><i class="fa-solid fa-house"></i><span>홈</span></button>
       <button type="button" data-nav="dict"><i class="fa-solid fa-book-open"></i><span>사전</span></button>
       <button type="button" data-nav="match"><i class="fa-brands fa-youtube"></i><span>중계</span></button>
+      <button type="button" data-nav="quiz"><i class="fa-solid fa-question"></i><span>퀴즈</span></button>
       <button type="button" data-nav="saved"><i class="fa-solid fa-bookmark"></i><span>저장</span></button>
       <button type="button" data-nav="settings"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>설정</span></button>
     </nav>
@@ -209,6 +215,7 @@
   <script src="js/dictionary.js"></script>
   <script src="js/samples.js"></script>
   <script src="js/analyze.js?v=1105"></script>
-  <script src="js/app.js?v=1129"></script>
+  <script src="js/quiz.js?v=1142"></script>
+  <script src="js/app.js?v=1133"></script>
 </body>
 </html>

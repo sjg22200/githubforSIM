@@ -38,6 +38,10 @@ $mime = @{
   ".json" = "application/json; charset=utf-8"
   ".woff2" = "font/woff2"
   ".ttf" = "font/ttf"
+  ".jpg" = "image/jpeg"
+  ".jpeg" = "image/jpeg"
+  ".png" = "image/png"
+  ".webp" = "image/webp"
 }
 
 . (Join-Path $PSScriptRoot "api.ps1")

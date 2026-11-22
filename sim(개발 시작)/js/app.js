@@ -11,6 +11,7 @@
     home: "축구 중계 속 영어",
     dict: "중계 영어 사전",
     match: "영상 속 표현",
+    quiz: "퀴즈",
     saved: "저장한 표현",
     settings: "설정"
   };
@@ -21,7 +22,9 @@
     saved: loadSaved(),
     broadcasts: loadBroadcasts(),
     activeVideoId: "",
-    pendingVideoId: ""
+    pendingVideoId: "",
+    quizRound: null,
+    quizSeen: new Set()
   };
 
   let player = null;
@@ -433,6 +436,7 @@
     if (state.view === "home") renderHome();
     else if (state.view === "dict") renderDict();
     else if (state.view === "saved") renderSaved();
+    else if (state.view === "quiz") renderQuiz();
     else if (state.view === "match") renderBroadcasts();
   }
 
@@ -637,6 +641,7 @@
     if (state.view === "home") renderHome();
     if (state.view === "dict") renderDict();
     if (state.view === "saved") renderSaved();
+    if (state.view === "quiz") renderQuiz();
     if (state.view === "settings") applyTheme(savedThemeChoice());
     if (state.view === "match") {
       const typed = window.SIM.parseVideoId($("yt-url").value);
@@ -754,6 +759,188 @@
         <p class="clamp">${escapeHtml(term.blurb)}</p>
         <button type="button" class="text-btn" data-action="open-term" data-id="${term.id}" style="padding:0.45rem 0.7rem;align-self:flex-start">설명 열기</button>
       </article>`).join("");
+  }
+
+  function shuffleItems(list) {
+    const copy = [...list];
+    for (let index = copy.length - 1; index > 0; index -= 1) {
+      const swap = Math.floor(Math.random() * (index + 1));
+      const item = copy[index];
+      copy[index] = copy[swap];
+      copy[swap] = item;
+    }
+    return copy;
+  }
+
+  function quizPool() {
+    const byId = new Map();
+    (window.SIM_TERMS || []).forEach((term) => {
+      if (term && term.id && term.term && term.ko) byId.set(term.id, term);
+    });
+    state.broadcasts.forEach((record) => {
+      (record.items || []).forEach((item) => {
+        if (!item || !item.term || !item.ko) return;
+        const id = item.dictId || learnedId(item.term);
+        if (!id || byId.has(id)) return;
+        byId.set(id, {
+          id,
+          term: item.term,
+          ko: item.ko,
+          blurb: item.blurb || item.explain || item.quoteKo || "",
+          cat: ENTRY_CATS.has(item.cat) ? item.cat : "slang",
+          aliases: [item.surface, item.term].filter(Boolean),
+          learned: true
+        });
+      });
+    });
+    return [...byId.values()];
+  }
+
+  function situationText(term) {
+    let text = String(term.blurb || "");
+    [term.term, ...(term.aliases || [])].forEach((word) => {
+      const clean = String(word || "").trim();
+      if (clean.length < 2) return;
+      text = text.replace(new RegExp(clean.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), "");
+    });
+    text = text.replace(/\s+/g, " ").replace(/\s+([,.])/g, "$1").trim();
+    return text || "그림 속 경기 상황에 맞는 영어 표현을 고르세요.";
+  }
+
+  function makeQuizItem(answer, pool) {
+    const name = answer.term.toLowerCase();
+    const others = pool.filter((term) => term.id !== answer.id && term.term.toLowerCase() !== name);
+    const same = others.filter((term) => term.cat === answer.cat);
+    const distractors = shuffleItems(same.length >= 3 ? same : others).slice(0, 3);
+    return {
+      answer,
+      choices: shuffleItems([answer, ...distractors]),
+      picked: ""
+    };
+  }
+
+  function startQuizRound() {
+    const pool = quizPool();
+    if (pool.length < 4) {
+      state.quizRound = { empty: true, items: [], index: 0, phase: "play" };
+      return;
+    }
+    const items = [];
+    const used = new Set();
+    const limit = Math.min(10, pool.length);
+    while (items.length < limit) {
+      let fresh = pool.filter((term) => !used.has(term.id) && !state.quizSeen.has(term.id));
+      if (!fresh.length) {
+        state.quizSeen.clear();
+        fresh = pool.filter((term) => !used.has(term.id));
+      }
+      if (!fresh.length) break;
+      const answer = fresh[Math.floor(Math.random() * fresh.length)];
+      used.add(answer.id);
+      state.quizSeen.add(answer.id);
+      items.push(makeQuizItem(answer, pool));
+    }
+    state.quizRound = { empty: false, items, index: 0, phase: "play" };
+  }
+
+  function quizFinished(round) {
+    return round.items.length > 0 && round.items.every((item) => item.picked);
+  }
+
+  function quizNav(delta) {
+    const round = state.quizRound;
+    if (!round || round.empty || round.phase === "review") return;
+    const next = round.index + delta;
+    if (next < 0 || next >= round.items.length) return;
+    round.index = next;
+    renderQuiz();
+  }
+
+  function renderQuizReview(round) {
+    const correct = round.items.filter((item) => item.picked === item.answer.id);
+    const wrong = round.items.filter((item) => item.picked && item.picked !== item.answer.id);
+    const section = (title, list, kind) => {
+      if (!list.length) return "";
+      return `<h3>${title}</h3><div class="quiz-review-list">${list.map((item) => {
+        const chosen = item.choices.find((choice) => choice.id === item.picked);
+        return `<article class="quiz-review-item">
+          <div>
+            <strong>${escapeHtml(item.answer.term)}</strong>
+            <p>${escapeHtml(item.answer.ko)}</p>
+            ${kind === "wrong" && chosen ? `<p>고른 답 ${escapeHtml(chosen.term)}</p>` : ""}
+          </div>
+          ${bookmarkButton(item.answer.id)}
+        </article>`;
+      }).join("")}</div>`;
+    };
+    return `
+      <article class="panel quiz-card quiz-review">
+        <div class="quiz-top">
+          <p>결과 확인</p>
+          <p>맞음 ${correct.length} · 틀림 ${wrong.length}</p>
+        </div>
+        ${section("맞은 단어", correct, "right")}
+        ${section("틀린 단어", wrong, "wrong")}
+        <div class="row-actions">
+          <button type="button" class="btn btn-primary" data-action="quiz-restart">새 10문제</button>
+        </div>
+      </article>`;
+  }
+
+  function renderQuiz() {
+    const mount = $("quiz-mount");
+    if (!mount) return;
+    if (!state.quizRound) startQuizRound();
+    const round = state.quizRound;
+    if (!round || round.empty) {
+      mount.innerHTML = `
+        <div class="saved-empty panel">
+          <h2>아직 퀴즈를 낼 표현이 부족합니다</h2>
+          <p class="lede">사전에 있는 표현이나, 영상에서 찾은 표현이 4개 이상 모이면 상황 퀴즈가 열립니다.</p>
+        </div>`;
+      return;
+    }
+    if (round.phase === "review") {
+      mount.innerHTML = renderQuizReview(round);
+      return;
+    }
+    const item = round.items[round.index];
+    const picked = item.picked;
+    const answer = item.answer;
+    const scene = window.SIM_QUIZ ? window.SIM_QUIZ.sceneFor(answer) : "";
+    const done = quizFinished(round);
+    mount.innerHTML = `
+      <article class="panel quiz-card">
+        <div class="quiz-top">
+          <p>그림 속 상황에 맞는 표현을 고르세요.</p>
+          <p>${round.index + 1} / ${round.items.length}</p>
+        </div>
+        ${scene}
+        <p class="quiz-prompt">${escapeHtml(situationText(answer))}</p>
+        <div class="quiz-choices">
+          ${item.choices.map((choice) => {
+            const mine = picked && choice.id === picked;
+            const right = mine && choice.id === answer.id;
+            const wrong = mine && choice.id !== answer.id;
+            return `<button type="button" class="quiz-choice${right ? " is-right" : ""}${wrong ? " is-wrong" : ""}" data-action="quiz-choice" data-id="${escapeHtml(choice.id)}" ${picked ? "disabled" : ""}>${escapeHtml(choice.term)}</button>`;
+          }).join("")}
+        </div>
+        ${picked ? `<p class="quiz-result">${picked === answer.id ? "정답입니다" : "오답입니다."}</p>` : ""}
+        <div class="row-actions">
+          <button type="button" class="btn btn-ghost" data-action="quiz-prev" ${round.index === 0 ? "disabled" : ""}>이전 문제</button>
+          <button type="button" class="btn btn-ghost" data-action="quiz-next" ${round.index === round.items.length - 1 ? "disabled" : ""}>다음 문제</button>
+          <button type="button" class="btn btn-primary" data-action="quiz-result" ${done ? "" : "disabled"}>결과 확인</button>
+        </div>
+      </article>`;
+  }
+
+  function answerQuiz(id) {
+    const round = state.quizRound;
+    if (!round || round.empty || round.phase !== "play") return;
+    const item = round.items[round.index];
+    if (!item || item.picked) return;
+    item.picked = id;
+    renderQuiz();
   }
 
   function renderSaved() {
@@ -1251,6 +1438,22 @@
       closeSheet(false);
     } else if (action === "toggle-save") {
       toggleSaved(target.dataset.id);
+    } else if (action === "quiz-choice") {
+      answerQuiz(target.dataset.id);
+    } else if (action === "quiz-next") {
+      quizNav(1);
+    } else if (action === "quiz-prev") {
+      quizNav(-1);
+    } else if (action === "quiz-result") {
+      const round = state.quizRound;
+      if (round && quizFinished(round)) {
+        round.phase = "review";
+        renderQuiz();
+      }
+    } else if (action === "quiz-restart") {
+      state.quizSeen.clear();
+      startQuizRound();
+      renderQuiz();
     } else if (action === "speak-term" || action === "speak-example") {
       const term = window.SIM.termById(target.dataset.id);
       speak(action === "speak-term" ? term.term : term.example);
